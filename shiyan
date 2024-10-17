@@ -1,0 +1,71 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# 数值导数计算函数
+def numerical_derivative(f, x, h=1e-5):
+    """
+    使用中心差分法计算函数f在点x处的数值导数
+    :param f: 被导函数，应该是一个接受单个浮点数并返回浮点数的函数
+    :param x: 计算导数的点
+    :param h: 步长，默认为1e-5
+    :return: 函数f在点x处的数值导数
+    """
+    return (f(x + h) - f(x - h)) / (2 * h)
+
+
+# 原始函数
+def f(x):
+    return x ** 2
+
+
+# 原始函数的导数（理论值）
+def f_prime(x):
+    return 2 * x
+
+
+# 计算导数的点
+x_point = 2.0
+
+# 生成用于绘图的x值
+x_values = np.linspace(-1, 5, 400)
+y_values = f(x_values)  # 原始函数的y值
+y_prime_values_theoretical = f_prime(x_values)  # 理论导数的y值
+
+# 计算多个点的数值导数用于绘图
+numerical_derivatives = [numerical_derivative(f, x_i) for x_i in x_values]
+
+# 绘制原始函数
+plt.figure(figsize=(12, 5))
+
+plt.subplot(1, 2, 1)  # 第一个子图
+plt.plot(x_values, y_values, label=r'$f(x) = x^2$')
+plt.scatter([x_point], [f(x_point)], color='red', zorder=5, label=f'Point at $x = {x_point:.1f}$')
+plt.axhline(0, color='black', linewidth=0.5)
+plt.axvline(0, color='black', linewidth=0.5)
+plt.grid(color='gray', linestyle='--', linewidth=0.5)
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.title(r'Original Function $f(x) = x^2$')
+plt.legend()
+
+# 绘制数值导数
+plt.subplot(1, 2, 2)  # 第二个子图
+# 绘制理论导数曲线
+plt.plot(x_values, y_prime_values_theoretical, label=r'$f\prime(x) = 2x$', color='gray')
+# 绘制数值导数点
+plt.scatter(x_values, numerical_derivatives, color='blue', alpha=0.5, label='Numerical Derivatives')
+# 绘制在x_point处的切线（这里为了清晰起见，只绘制切线的一部分）
+slope = numerical_derivative(f, x_point)
+intercept = f(x_point) - slope * x_point
+x_line = np.linspace(x_point - 0.5, x_point + 0.5, 100)
+y_line = slope * x_line + intercept
+plt.plot(x_line, y_line, 'r--', label=f'Tangent at $x = {x_point:.1f}$ (slope = {slope:.4f})')
+plt.scatter([x_point], [f_prime(x_point)], color='red', zorder=5,
+            label=f'Theoretical Derivative at $x = {x_point:.1f}$')
+plt.axhline(0, color='black', linewidth=0.5)
+plt.axvline(0, color='black', linewidth=0.5)
+plt.grid(color='gray', linestyle='--', linewidth=0.5)
+plt.xlabel('x')
+plt.ylabel(r'$f\prime(x)$')
+plt.title(f'Numerical Derivative of $f(x) = x^2$ at $x = {x_point
